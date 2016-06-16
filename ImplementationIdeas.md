@@ -1,6 +1,6 @@
 
-Introduction
-------------
+# Introduction
+
 
 We want to create a functional cache digests implementation purely in Javascript. 
 
@@ -26,4 +26,21 @@ be done in parts, like this:
 ```
 
 The intention is that each intermediate result should be easy to visualize. 
+
+# Milestones
+
+
+## 1: Compute a hash value
+
+This is to take a URL or (URL, Etag) tuple and compute a hash value. 
+The process is described at [section 2.1.2](https://mnot.github.io/I-D/h2-cache-digest/#hash) of the draft. 
+
+## 2: Compute a digest
+
+This is the process where several hash values (as computed on the previous section) are combined to produce a digest.
+The process is fully described at [section 2.1.1](https://mnot.github.io/I-D/h2-cache-digest/#computing) of the draft.
+
+## 3: Check if a hash value is in cache digest
+
+See [section 2.2.1](https://mnot.github.io/I-D/h2-cache-digest/#rfc.section.2.2.1) of the draft. 
 
