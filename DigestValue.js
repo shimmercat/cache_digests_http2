@@ -44,7 +44,9 @@ DigestValue.prototype._loadHashValues = function(URLs, validators, N, P){
     hashValues.push(Number(hashValue.hash_value));
   }
 
-  hashValues.sort();
+  hashValues.sort(function(a, b){
+    return b-a;
+  });
 
   return hashValues;
 };
