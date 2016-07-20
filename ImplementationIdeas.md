@@ -48,6 +48,6 @@ The process is fully described at [section 2.1.1](https://mnot.github.io/I-D/h2-
 
 ## 3: Check if a hash value is in cache digest
 
-See [section 2.2.1](https://mnot.github.io/I-D/h2-cache-digest/#rfc.section.2.2.1) of the draft.
+See [section 2.2.1](https://mnot.github.io/I-D/Published/h2-cache-digest/#rfc.section.2.2.1) of the draft.
 
 >>>>>>> origin/master
