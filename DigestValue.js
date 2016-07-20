@@ -18,6 +18,21 @@ let URLs = [
   [url, etag] = ['https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/4/bootstrap.min.css']
 ];
 
+/**
+ * Creates an object with cache digest values. After this object is created, it contains
+ * the properties "hash_values" and "digest_value". Only "digest_value" should be in an HTTP message.
+ * "hash_values" is an intermediate array with the computed digest values, useful for illustration
+ * purposes.
+ *
+ *  .digest_value is an array of 0 and 1s
+ *
+ *  .hash_values is ....
+ *
+ * @param {Boolean} validators
+ * @param {Array<String|Tuple>} URLs
+ * @return {Number} P
+ */
+
 function DigestValue(validators, URLs, P){
   this.validators = validators;
   this.URLs = URLs;
@@ -57,6 +72,7 @@ DigestValue.prototype._loadDigestValue = function(values, N, P){
   let digestValue = [];
   let valuesLen = values.length;
 
+  // Encoding the values of N and P
   for (let i = 0; i < 5; i++){
     digestValue.push((Math.log2(this.N) >> i) & 1);
   }
