@@ -26,7 +26,7 @@ let URLs = [
  *
  *  .digest_value is an array of 0 and 1s
  *
- *  .hash_values is ....
+ *  .hash_values is an array of computed "hash-values" expressed as an integer
  *
  * @param {Boolean} validators
  * @param {Array<String|Tuple>} URLs
@@ -40,7 +40,7 @@ function DigestValue(validators, URLs, P){
   this.N = this._roundToNearestTwoPower(this.URLs.length);
   this.hash_values = this._loadHashValues(this.URLs, this.validators, this.N, this.P);
   this.digest_value = this._loadDigestValue(this.hash_values, this.N, this.P);
-  // this.digest_value = this._padDigestValue(this.digest_value);
+  this.digest_value = this._padDigestValue(this.digest_value);
 
   return this;
 }
@@ -107,7 +107,15 @@ DigestValue.prototype._loadDigestValue = function(values, N, P){
 };
 
 DigestValue.prototype._padDigestValue = function(digestValue){
-  //Implement padding function to round the bits to byte value
+  let digest = digestValue;
+  if(digest.length % 8 !== 0){
+    let octetLength = Math.ceil(digest.length / 8) * 8;
+    for(let i = digest.length; i < octetLength; i++){
+      digest.push(0);
+    }
+
+  }
+  return digest;
 };
 
 let testDigestsValue = new DigestValue(validators, URLs, P);
