@@ -28,36 +28,61 @@ function DigestQuery(digest_value, tuples, validators, hash_values){
     return powValue;
   }
 
+  function getR(array){
+    let retInt = 0;
+
+    for(let i = 0; i < array.length; i++){
+      if(array[i] === 1){
+        retInt += i * 2;
+      }
+    }
+
+    return retInt;
+  }
+
   this.N = getPow(0, DV);
   this.P = getPow(5, DV);
   this.tuples = tuples;
   this.validators = validators;
   // let HV = this._loadHashValues(tuple, validators, N, P);
-  let HV = this._loadHashes(this.tuples, this.validators, this.N, this.P)
+  let HV = this._loadHashes(this.tuples, this.validators, this.N, this.P);
 
   let C = -1;
   let matchFound;
   let indexOfDiscarded = 0;
-  let Q = 0;
 
-  // while(matchFound === undefined){
-  //   for(let i = indexOfDiscarded; i < DV.length; i++){
-  //     if(DV[i] === 0){
-  //       Q += 1;
-  //     } else {
-  //       indexOfDiscarded = i;
-  //       console.log('indexOfDiscarded: ', indexOfDiscarded);
-  //       console.log('Value of Q: ', Q);
-  //       break;
-  //     }
-  //     if(i === DV.length){
-  //       matchFound = true;
-  //     }
-  //   }
-  //   matchFound = true;
-  //
-  // }
+  while(matchFound === undefined){
+    console.log(indexOfDiscarded);
+    for(let i = indexOfDiscarded; i < DV.length; i++){
+      let Q = 0;
+
+      if(DV[i] === 0){
+        Q += 1;
+      } else {
+        indexOfDiscarded = i;
+        //reading the digest-value - R = integer
+        let readTo = Math.log2(this.P);
+        let bitsArray = [];
+        for(let x = indexOfDiscarded + 1; x <= readTo; x++){
+          bitsArray.push(DV[x]);
+        }
+        let R = getR(bitsArray);
+        let D = (Q * this.P) + R;
+        C += D + 1;
+
+        if( C === HV){
+          matchFound = true;
+        }
+      }
+      if(i === DV.length - 1 && matchFound === undefined){
+        matchFound = false;
+      }
+    }
+    this.matchFound = matchFound;
+  }
+
   console.log(this);
+  return this;
 }
 
 DigestQuery.prototype._loadHashes = function(URLs, validators, N, P){
@@ -76,6 +101,6 @@ DigestQuery.prototype._loadHashes = function(URLs, validators, N, P){
   });
 
   return hVs;
-}
+};
 
 let testQueryValue = new DigestQuery(testDigestsValue.digest_value, URLs, validators, testDigestsValue.hash_values);
