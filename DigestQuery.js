@@ -1,9 +1,8 @@
 'use strict';
 
 function DigestQuery(digest_value, tuples, validators, hash_values){
-  // let DV = new DigestValue(validators, tuples, 32); // 32 is the value of P
   let DV = digest_value;
-  console.log(DV);
+
   function getPow(start, bits){
     let powValue = 0;
     let power = 0;
@@ -28,59 +27,67 @@ function DigestQuery(digest_value, tuples, validators, hash_values){
     return powValue;
   }
 
-  function getR(array){
-    let retInt = 0;
+  function calcInt(bitArray){
+    let count = bitArray.length;
+    let returnInt = 0;
 
-    for(let i = 0; i < array.length; i++){
-      if(array[i] === 1){
-        retInt += i * 2;
-      }
+    for(let c = 0; c < count; c++){
+      if(bitArray[c] === 1)
+      returnInt += Math.pow(2, c);
     }
 
-    return retInt;
+    return returnInt;
   }
 
   this.N = getPow(0, DV);
   this.P = getPow(5, DV);
   this.tuples = tuples;
   this.validators = validators;
-  // let HV = this._loadHashValues(tuple, validators, N, P);
-  let HV = this._loadHashes(this.tuples, this.validators, this.N, this.P);
 
-  let C = -1;
+  let HV = this._loadHashes(this.tuples, this.validators, this.N, this.P)
+
   let matchFound;
   let indexOfDiscarded = 0;
 
   while(matchFound === undefined){
-    console.log(indexOfDiscarded);
-    for(let i = indexOfDiscarded; i < DV.length; i++){
-      let Q = 0;
 
+    let Q = 0;
+    for(let i = indexOfDiscarded; i < DV.length; i++){
       if(DV[i] === 0){
         Q += 1;
       } else {
         indexOfDiscarded = i;
-        //reading the digest-value - R = integer
-        let readTo = Math.log2(this.P);
-        let bitsArray = [];
-        for(let x = indexOfDiscarded + 1; x <= readTo; x++){
-          bitsArray.push(DV[x]);
-        }
-        let R = getR(bitsArray);
-        let D = (Q * this.P) + R;
-        C += D + 1;
 
-        if( C === HV){
-          matchFound = true;
+        let startBit = i + 1;
+        let readLength = Math.log2(P);
+        let tempArray = [];
+
+        for(let temp = 0; temp < readLength; temp++){
+          tempArray.push(DV[startBit]);
+          startBit++;
+        }
+
+        let C = -1;
+        let R = calcInt(tempArray);
+        let D = Q * P + R;
+
+        C += D + 1;
+        Q = 0;
+
+        for(let hvCount = 0; hvCount < HV.length; hvCount++){
+          if(C == HV[hvCount]){
+            matchFound = true;
+          }
         }
       }
-      if(i === DV.length - 1 && matchFound === undefined){
+
+      if(i === DV.length - 1 && !matchFound){
         matchFound = false;
       }
     }
-    this.matchFound = matchFound;
+    break;
   }
-
+  this.matched = matchFound;
   console.log(this);
   return this;
 }
